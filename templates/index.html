@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Get OCR Result</title>
+    <script>
+        // ファイルが選択されたらBase64にエンコード
+        function readFile(input) {
+            var file = input.files[0];
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                var base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+                document.getElementById('image_base64').value = base64String;
+            }
+            reader.readAsDataURL(file);
+        }
+    </script>
+</head>
+<body>
+    <form action="/show_result" method="post">
+        <label for="endpoint">Select Endpoint:</label>
+        <select id="endpoint" name="endpoint">
+            {% for endpoint in endpoints %}
+                <option value="{{ endpoint }}">{{ endpoint }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="imageFile">Upload Image:</label>
+        <input type="file" id="imageFile" name="imageFile" accept="image/*" onchange="readFile(this);">
+        <br>
+        <label for="image_base64">Or Enter Base64 Encoded Image:</label>
+        <input type="text" id="image_base64" name="image_base64">
+        <br>
+        <input type="submit" value="Get OCR">
+    </form>
+
+    {% if content %}
+    <textarea rows="30" cols="100">
+        {{ content }}
+    </textarea>
+    {% endif %}
+</body>
+</html>
